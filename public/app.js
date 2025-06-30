@@ -1,7 +1,8 @@
 import getProblemSteps from "./tools/getProblemSteps.js";
+import filterByDate from "./tools/filterByDate.js";
 
 async function main() {
-    createButton();
+    createButtons();
 }
 
 async function select() {
@@ -12,28 +13,46 @@ async function select() {
         }
     });
     const data = await res.json();
-    const ret = getProblemSteps(data);
-    console.log(ret);
-    new Chart(document.getElementById('pareto'), {
-        type: 'bar',
-        data: {
-            labels: ret.map(step => step.step),
-            datasets: [
-                {
-                    label: 'Steps and Fail Rates.',
-                    data: ret.map(step => step.count)
-                }
-            ]
-        }
-    });
+    const filteredInspections = filterByDate(data, document.getElementById('start').value, document.getElementById('end').value);
+    const ret = getProblemSteps(filteredInspections);
+    createChart(ret);
 }
-function createButton() {
+function createButtons() {
     const newButton = document.createElement('button');
     newButton.innerText = 'Select';
     newButton.addEventListener('click', () => {
         select();
     });
     document.body.appendChild(newButton);
+
+    const calendarStart = document.createElement('input');
+    const calendarEnd = document.createElement('input');
+    calendarStart.type = 'date';
+    calendarStart.id = 'start';
+    calendarEnd.type = 'date';
+    calendarEnd.id = 'end';
+
+    document.body.appendChild(calendarStart);
+    document.body.appendChild(calendarEnd);
+    
+}
+function createChart(data) {
+    document.querySelector('canvas')?.remove();
+    const newChart = document.createElement('canvas');
+    newChart.style.height = '90%';
+    new Chart(newChart, {
+        type: 'bar',
+        data: {
+            labels: data.map(step => step.step),
+            datasets: [
+                {
+                    label: 'Steps and Fail Rates.',
+                    data: data.map(step => step.count)
+                }
+            ]
+        }
+    });
+    document.getElementById('chartDiv').prepend(newChart);
 }
 
 main();

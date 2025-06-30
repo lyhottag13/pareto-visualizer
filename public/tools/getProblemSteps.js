@@ -1,6 +1,7 @@
 import numberOfChecks from "./constants/numberOfChecks.js";
 
 export default function getProblemSteps(rows) {
+    console.log(rows);
     const steps = [];
     for (let i = 0; i < numberOfChecks; i++) {
         steps[i] = { step: i + 1, count: 0 };

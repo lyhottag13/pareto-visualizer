@@ -5,10 +5,23 @@ import checkList from "./tools/constants/checkList.js";
 let sortedProblemSteps;
 
 async function main() {
-    createButtons();
+    createSidePanel();
 }
 
 async function select() {
+    const limitValue = document.getElementById('limit').value || 15;
+    const startValue = document.getElementById('start').value;
+    const endValue = document.getElementById('end').value;
+    // If the user input a limit less or equal to 0, then alert the user.
+    if (limitValue <= 0) {
+        window.alert('Límite inválido.');
+        return;
+    }
+    // If the start is after the end, then alert the user.
+    if (new Date(startValue).getTime() > new Date(endValue).getTime()) {
+        window.alert('Fecha inválida.');
+        return;
+    }
     const res = await fetch('/api/select', {
         method: "POST",
         headers: {
@@ -16,14 +29,16 @@ async function select() {
         }
     });
     const data = await res.json();
-    const filteredInspections = filterByDate(data, document.getElementById('start').value, document.getElementById('end').value);
-    sortedProblemSteps = getProblemSteps(filteredInspections);
+    const filteredInspections = filterByDate(data, startValue, endValue);
+    sortedProblemSteps = getProblemSteps(filteredInspections, limitValue);
     createChart(sortedProblemSteps);
 }
-function createButtons() {
-    const newButton = document.createElement('button');
-    newButton.innerText = 'Select';
-    newButton.addEventListener('click', () => {
+function createInputDiv() {
+    const label = document.createElement('span');
+    label.innerText = 'Rango';
+    const selectButton = document.createElement('button');
+    selectButton.innerText = 'Select';
+    selectButton.addEventListener('click', () => {
         select();
     });
 
@@ -34,16 +49,55 @@ function createButtons() {
     calendarEnd.type = 'date';
     calendarEnd.id = 'end';
 
+    const limitInput = document.createElement('input');
+    limitInput.id = 'limit';
+
     const newDiv = document.createElement('div');
     newDiv.id = 'inputDiv';
+    newDiv.className = 'tile';
 
-    document.body.appendChild(newDiv);
+    newDiv.appendChild(label);
     newDiv.appendChild(calendarStart);
     newDiv.appendChild(calendarEnd);
-    newDiv.appendChild(newButton);
+    newDiv.appendChild(limitInput);
+    newDiv.appendChild(selectButton);
+    return newDiv;
+}
 
+function createSidePanel() {
+    const panel = document.createElement('div');
+    panel.id = 'sidePanel';
+
+    const todayButton = document.createElement('div');
+    todayButton.classList.add('button');
+    todayButton.classList.add('tile');
+    todayButton.innerText = 'Hoy'
+    todayButton.addEventListener('click', () => {
+        const today = new Date().toISOString().slice(0, 10);
+        document.getElementById('start').value = today;
+        document.getElementById('end').value = today;
+        select();
+    });
+
+    const allTimeButton = document.createElement('div');
+    allTimeButton.classList.add('button');
+    allTimeButton.classList.add('tile');
+    allTimeButton.innerText = 'Todos los Tiempos';
+    allTimeButton.addEventListener('click', () => {
+        // We force the data to start from the beginning by setting it to Jan 1, 1970.
+        const fossil = new Date(0).toISOString().slice(0, 10);
+        document.getElementById('start').value = fossil;
+        document.getElementById('end').value = new Date(Date.now()).toISOString().slice(0, 10);
+        select();
+    });
+
+    document.getElementById('appDiv').appendChild(panel);
+    panel.appendChild(todayButton);
+    panel.appendChild(allTimeButton);
+    panel.appendChild(createInputDiv());
 }
 function createChart(data) {
+    document.getElementById('chartDiv').className = '';
     document.querySelector('canvas')?.remove();
     const newChart = document.createElement('canvas');
     newChart.style.height = '90%';

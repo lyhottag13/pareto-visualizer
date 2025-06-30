@@ -1,8 +1,9 @@
 import numberOfChecks from "./constants/numberOfChecks.js";
 
-export default function getProblemSteps(rows) {
+export default function getProblemSteps(rows, numberOfDesiredSteps) {
     console.log(rows);
     const steps = [];
+    // Initializes all steps with a value of 0.
     for (let i = 0; i < numberOfChecks; i++) {
         steps[i] = { step: i + 1, count: 0 };
     }
@@ -14,5 +15,11 @@ export default function getProblemSteps(rows) {
         }
     }
     // Returns the steps sorted in descending order (highest first).
-    return steps.sort((a, b) => b.count - a.count);
+    const sortedSteps = steps.sort((a, b) => b.count - a.count);
+    const desiredSteps = [];
+    for (let i = 0; (i < numberOfDesiredSteps) && (i < steps.length); i++) {
+        desiredSteps.push(sortedSteps[i]);
+    }
+    // Returns the top n steps, defined by numberOfDesiredSteps.
+    return desiredSteps;
 };

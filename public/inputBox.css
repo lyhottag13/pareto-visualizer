@@ -1,0 +1,28 @@
+button {
+    margin-top: auto;
+    width: 85%;
+    height: 50px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+}
+
+.button {
+    display: flex;
+    background-color: blanchedalmond;
+    border-radius: 20px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+#inputDiv {
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    height: 100%;
+    width: 100%;
+    background-color: rgb(204, 150, 255);
+}

@@ -1,7 +1,42 @@
-#inputDiv {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-content: center;
-    gap: 10px;
+body {
+    background-color: rgb(255, 124, 124);
+    font-family: 'Lucida Sans', Arial, sans-serif;
 }
+
+#appDiv {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: grid;
+    grid-template-columns: 5fr 1fr;
+    justify-items: center;
+    gap: 10px;
+    height: 96.5vh;
+    width: 98.5%;
+    margin: 10px;
+}
+
+#chartDiv {
+    border-radius: 20px;
+    background-color: aquamarine;
+    width: 100%;
+    padding: 0px;
+    height: 100%;
+}
+#sidePanel {
+    display: grid;
+    grid-template-rows: 1fr 1fr 2fr;
+    gap: 10px;
+    height: 100%;
+    width: 100%;
+}
+
+#inputDiv span {
+    margin-top: auto;
+}
+
+.tile {
+    /* border: 0px solid black; */
+}
+
+

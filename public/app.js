@@ -1,12 +1,7 @@
 import getProblemSteps from "./tools/getProblemSteps.js";
 
 async function main() {
-    const newButton = document.createElement('button');
-    newButton.innerText = 'Select';
-    newButton.addEventListener('click', () => {
-        select();
-    });
-    document.body.appendChild(newButton);
+    createButton();
 }
 
 async function select() {
@@ -16,10 +11,18 @@ async function select() {
             'Content-Type': 'application/json'
         }
     });
-    console.log('olasdf');
     const data = await res.json();
-    // getProblemSteps(data);
-    console.log(data);
+    const ret = getProblemSteps(data);
+    console.log(ret);
+}
+
+function createButton() {
+    const newButton = document.createElement('button');
+    newButton.innerText = 'Select';
+    newButton.addEventListener('click', () => {
+        select();
+    });
+    document.body.appendChild(newButton);
 }
 
 main();

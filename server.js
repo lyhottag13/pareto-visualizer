@@ -22,9 +22,9 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'app.html'));
 });
 
+// Sends all the rows in the qa1 database. 
 app.post('/api/select', async (req, res) => {
     const SQLstring = 'SELECT * FROM qa1';
     const [rows] = await pool.query(SQLstring);
-    console.log(rows);
     res.json(rows);
 })

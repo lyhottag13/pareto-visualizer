@@ -1,5 +1,8 @@
 import getProblemSteps from "./tools/getProblemSteps.js";
 import filterByDate from "./tools/filterByDate.js";
+import checkList from "./tools/constants/checkList.js";
+
+let sortedProblemSteps;
 
 async function main() {
     createButtons();
@@ -14,8 +17,8 @@ async function select() {
     });
     const data = await res.json();
     const filteredInspections = filterByDate(data, document.getElementById('start').value, document.getElementById('end').value);
-    const ret = getProblemSteps(filteredInspections);
-    createChart(ret);
+    sortedProblemSteps = getProblemSteps(filteredInspections);
+    createChart(sortedProblemSteps);
 }
 function createButtons() {
     const newButton = document.createElement('button');
@@ -23,7 +26,6 @@ function createButtons() {
     newButton.addEventListener('click', () => {
         select();
     });
-    document.body.appendChild(newButton);
 
     const calendarStart = document.createElement('input');
     const calendarEnd = document.createElement('input');
@@ -32,9 +34,14 @@ function createButtons() {
     calendarEnd.type = 'date';
     calendarEnd.id = 'end';
 
-    document.body.appendChild(calendarStart);
-    document.body.appendChild(calendarEnd);
-    
+    const newDiv = document.createElement('div');
+    newDiv.id = 'inputDiv';
+
+    document.body.appendChild(newDiv);
+    newDiv.appendChild(calendarStart);
+    newDiv.appendChild(calendarEnd);
+    newDiv.appendChild(newButton);
+
 }
 function createChart(data) {
     document.querySelector('canvas')?.remove();
@@ -43,16 +50,30 @@ function createChart(data) {
     new Chart(newChart, {
         type: 'bar',
         data: {
-            labels: data.map(step => step.step),
+            labels: data.map(step => `Step ${step.step}`),
             datasets: [
                 {
-                    label: 'Steps and Fail Rates.',
+                    label: 'Fails',
                     data: data.map(step => step.count)
                 }
-            ]
+            ],
+        },
+        options: {
+            onClick: (event, elements, chart) => {
+                try {
+                    displayStep(elements[0].index);
+                } catch (err) {
+                    console.log(err);
+                }
+            }
         }
     });
-    document.getElementById('chartDiv').prepend(newChart);
+    document.getElementById('chartDiv').appendChild(newChart);
+}
+
+function displayStep(index) {
+    const stepNumber = sortedProblemSteps[index].step;
+    window.alert(checkList[stepNumber - 1]);
 }
 
 main();

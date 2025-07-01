@@ -1,4 +1,4 @@
-import numberOfChecks from "./constants/numberOfChecks.js";
+import numberOfChecks from "../constants/NUMBER_OF_CHECKS.js";
 
 export default function getProblemSteps(rows, numberOfDesiredSteps) {
     console.log(rows);

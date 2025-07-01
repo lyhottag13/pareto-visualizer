@@ -1,6 +1,6 @@
-import getProblemSteps from "./tools/getProblemSteps.js";
-import filterByDate from "./tools/filterByDate.js";
-import checkList from "./tools/constants/checkList.js";
+import getProblemSteps from "./utils/getProblemSteps.js";
+import filterByDate from "./utils/filterByDate.js";
+import checkList from "./constants/checkList.js";
 
 let sortedProblemSteps;
 
@@ -12,6 +12,7 @@ async function select() {
     const limitValue = document.getElementById('limit').value || 15;
     const startValue = document.getElementById('start').value;
     const endValue = document.getElementById('end').value;
+    // Input validation:
     // If the user input a limit less or equal to 0, then alert the user.
     if (limitValue <= 0) {
         window.alert('Límite inválido.');
@@ -22,12 +23,7 @@ async function select() {
         window.alert('Fecha inválida.');
         return;
     }
-    const res = await fetch('/api/select', {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
+    const res = await fetch('/api/select');
     const data = await res.json();
     const filteredInspections = filterByDate(data, startValue, endValue);
     sortedProblemSteps = getProblemSteps(filteredInspections, limitValue);
@@ -73,7 +69,8 @@ function createSidePanel() {
     todayButton.classList.add('tile');
     todayButton.innerText = 'Hoy'
     todayButton.addEventListener('click', () => {
-        const today = new Date().toISOString().slice(0, 10);
+        const today = new Date().toLocaleDateString('en-CA').slice(0, 10);
+        console.log(today);
         document.getElementById('start').value = today;
         document.getElementById('end').value = today;
         select();
@@ -84,10 +81,11 @@ function createSidePanel() {
     allTimeButton.classList.add('tile');
     allTimeButton.innerText = 'Todos los Tiempos';
     allTimeButton.addEventListener('click', () => {
-        // We force the data to start from the beginning by setting it to Jan 1, 1970.
-        const fossil = new Date(0).toISOString().slice(0, 10);
+        // Forces the data to start from the beginning by setting it to a date before deployment.
+        const fossil = new Date(2025, 0, 1).toLocaleDateString('en-CA').slice(0, 10);
+        console.log(new Date('2025-01-01'));
         document.getElementById('start').value = fossil;
-        document.getElementById('end').value = new Date(Date.now()).toISOString().slice(0, 10);
+        document.getElementById('end').value = new Date(Date.now()).toLocaleDateString('en-CA').slice(0, 10);
         select();
     });
 

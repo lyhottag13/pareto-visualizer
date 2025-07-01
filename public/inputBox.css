@@ -12,6 +12,13 @@ button {
     text-align: center;
     justify-content: center;
     align-items: center;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+#today:hover {
+    background-color: rgb(255, 255, 0);
+}
+#allTime:hover {
+    background-color: rgb(255, 255, 0);
 }
 #today {
     background-color: black;

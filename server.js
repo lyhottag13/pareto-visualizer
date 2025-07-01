@@ -29,7 +29,3 @@ app.get('/api/select', async (req, res) => {
     const [rows] = await pool.query(SQLstring);
     res.json(rows);
 });
-
-app.post('/api/password', async (req, res) => {
-    res.json({goodPassword: req.body.password === goodPassword})
-})

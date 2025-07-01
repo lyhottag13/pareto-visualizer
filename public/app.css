@@ -1,7 +1,8 @@
 body {
-    background-color: rgb(255, 124, 124);
+    background-color: rgb(225, 225, 225);
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 30px;
+    color: white;
 }
 
 #appDiv {
@@ -17,10 +18,60 @@ body {
     margin: 10px;
 }
 
-#chartDiv {
-    position: relative;
+#visuals {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
     border-radius: 20px;
-    background-color: aquamarine;
+    background-color: #a27575;
+    width: 100%;
+    padding: 0px;
+    height: 100%;
+}
+
+#tableDiv {
+    text-align: center;
+    border-radius: 20px;
+    position: relative;
+    background-color: #ff3838;
+    width: 100%;
+    padding: 0px;
+    height: 100%;
+}
+tr:nth-child(even) {
+    background-color: #db0000;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+tr {
+    font-size: 15px;
+    /* border: 1px solid black; */
+    /* border-radius: 20px; */
+}
+
+
+table tr:nth-child(1) th:nth-child(2) {
+    background-color: rgb(186, 186, 186);
+}
+
+table tr:nth-child(1) th:nth-child(1) {
+    padding-left: 10px;
+    background-color: rgb(186, 186, 186);
+    border-top-left-radius: 20px;
+}
+
+table tr:nth-child(1) th:nth-child(3) {
+    padding-right: 10px;
+    background-color: rgb(186, 186, 186);
+    border-top-right-radius: 20px;
+}
+
+#chartDiv {
+    border-radius: 20px;
+    position: relative;
+    background-color: #f1f1f1;
     width: 100%;
     padding: 0px;
     height: 100%;
@@ -40,12 +91,17 @@ body {
 
 #limit {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    font-size: 30px;
+    font-size: 50px;
     text-align: center;
-    height: 50px;
-    width: 50px;
+    height: 80px;
+    width: 80px;
     position: absolute;
     right: 10px;
     top: 10px;
     border-radius: 10px;
+    border: 0px solid black;
+}
+button {
+    background-color: black;
+    color: white;
 }

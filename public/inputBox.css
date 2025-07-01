@@ -8,11 +8,17 @@ button {
 
 .button {
     display: flex;
-    background-color: blanchedalmond;
     border-radius: 20px;
     text-align: center;
     justify-content: center;
     align-items: center;
+}
+#today {
+    background-color: black;
+    color: white;
+}
+#allTime {
+    background-color: rgb(182, 39, 39);
 }
 
 #inputDiv {
@@ -24,7 +30,7 @@ button {
     gap: 10px;
     height: 100%;
     width: 100%;
-    background-color: rgb(204, 150, 255);
+    background-color: rgb(182, 39, 39);
 }
 
 .smallLabel {

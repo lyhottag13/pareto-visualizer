@@ -6,7 +6,6 @@ import NUMBER_OF_CHECKS from "./constants/NUMBER_OF_CHECKS.js";
 let sortedProblemSteps;
 
 async function main() {
-    await initializePasswordQuery();
     createSidePanel();
     createLimitInput();
 }
@@ -34,6 +33,8 @@ async function select() {
     const data = await res.json();
     const filteredInspections = filterByDate(data, startValue, endValue);
     sortedProblemSteps = getProblemSteps(filteredInspections, limitValue);
+    console.log(sortedProblemSteps);
+    createTable(sortedProblemSteps)
     createChart(sortedProblemSteps);
 }
 function createInputDiv() {
@@ -85,29 +86,59 @@ function createSidePanel() {
     todayButton.classList.add('button');
     todayButton.classList.add('tile');
     todayButton.innerText = 'Hoy';
+    todayButton.id = 'today'
     todayButton.addEventListener('click', () => {
-        const today = new Date().toLocaleDateString('en-CA').slice(0, 10);
-        document.getElementById('start').value = today;
-        document.getElementById('end').value = today;
-        select();
+        handleToday();
     });
 
     const allTimeButton = document.createElement('div');
+    allTimeButton.id = 'allTime';
     allTimeButton.classList.add('button');
     allTimeButton.classList.add('tile');
     allTimeButton.innerText = 'Todos los Tiempos';
     allTimeButton.addEventListener('click', () => {
-        // Forces the data to start from the beginning by setting it to a date before deployment.
-        const fossil = new Date(2025, 0, 1).toLocaleDateString('en-CA').slice(0, 10);
-        document.getElementById('start').value = fossil;
-        document.getElementById('end').value = new Date(Date.now()).toLocaleDateString('en-CA').slice(0, 10);
-        select();
+        handleAllTime();
     });
 
     document.getElementById('appDiv').appendChild(panel);
     panel.appendChild(todayButton);
     panel.appendChild(allTimeButton);
     panel.appendChild(createInputDiv());
+
+}
+function handleAllTime() {
+    // Forces the data to start from the beginning by setting it to a date before deployment.
+    const fossil = new Date(2025, 0, 1).toLocaleDateString('en-CA').slice(0, 10);
+    document.getElementById('start').value = fossil;
+    document.getElementById('end').value = new Date(Date.now()).toLocaleDateString('en-CA').slice(0, 10);
+    select();
+}
+function handleToday() {
+    const today = new Date().toLocaleDateString('en-CA').slice(0, 10);
+    document.getElementById('start').value = today;
+    document.getElementById('end').value = today;
+    select();
+}
+function createTable(data) {
+    document.getElementById('tableDiv').querySelector('table')?.remove();
+    const table = document.createElement('table');
+    table.innerHTML = `
+    <tr>
+        <th>Step #</th>
+        <th>Name</th>
+        <th>Count</th>
+    </tr>
+    `;
+    for (let i = 0; i < data.length; i++) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td>${data[i].step}</td>
+        <td>${checkList[data[i].step - 1]}</td>
+        <td>${data[i].count}</td>
+        `;
+        table.appendChild(row);
+    }
+    document.getElementById('tableDiv').appendChild(table);
 }
 function createChart(data) {
     document.getElementById('chartDiv').className = '';
@@ -126,6 +157,7 @@ function createChart(data) {
             ],
         },
         options: {
+            backgroundColor: 'rgb(182, 39, 39)',
             onClick: (event, elements, chart) => {
                 try {
                     displayStep(elements[0].index);
@@ -151,7 +183,11 @@ function createLimitInput() {
     limitInput.id = 'limit';
     limitInput.maxLength = 2;
     limitInput.placeholder = '#';
-
+    limitInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            handleToday();
+        }
+    })
     const chartDiv = document.getElementById('chartDiv');
 
     chartDiv.appendChild(limitInput);

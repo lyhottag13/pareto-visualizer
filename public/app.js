@@ -1,20 +1,27 @@
 import getProblemSteps from "./utils/getProblemSteps.js";
 import filterByDate from "./utils/filterByDate.js";
 import checkList from "./constants/checkList.js";
+import NUMBER_OF_CHECKS from "./constants/NUMBER_OF_CHECKS.js";
 
 let sortedProblemSteps;
 
 async function main() {
+    await initializePasswordQuery();
     createSidePanel();
+    createLimitInput();
 }
 
 async function select() {
-    const limitValue = document.getElementById('limit').value || 15;
+    let limitValue = document.getElementById('limit').value;
     const startValue = document.getElementById('start').value;
     const endValue = document.getElementById('end').value;
     // Input validation:
+    if (limitValue === '') {
+        document.getElementById('limit').value = 15;
+        limitValue = 15;
+    }
     // If the user input a limit less or equal to 0, then alert the user.
-    if (limitValue <= 0) {
+    if (limitValue <= 0 || limitValue > NUMBER_OF_CHECKS || /[a-zA-Z]/.test(limitValue)) {
         window.alert('Límite inválido.');
         return;
     }
@@ -31,7 +38,15 @@ async function select() {
 }
 function createInputDiv() {
     const label = document.createElement('span');
+    const labelDe = document.createElement('span');
+    const labelA = document.createElement('span');
+    labelDe.innerText = 'De:'
+    labelA.innerText = 'A:'
     label.innerText = 'Rango';
+
+    labelDe.className = 'smallLabel';
+    labelA.className = 'smallLabel';
+
     const selectButton = document.createElement('button');
     selectButton.innerText = 'Select';
     selectButton.addEventListener('click', () => {
@@ -45,17 +60,19 @@ function createInputDiv() {
     calendarEnd.type = 'date';
     calendarEnd.id = 'end';
 
-    const limitInput = document.createElement('input');
-    limitInput.id = 'limit';
+    // const limitInput = document.createElement('input');
+    // limitInput.id = 'limit';
 
     const newDiv = document.createElement('div');
     newDiv.id = 'inputDiv';
     newDiv.className = 'tile';
 
     newDiv.appendChild(label);
+    newDiv.appendChild(labelDe);
     newDiv.appendChild(calendarStart);
+    newDiv.appendChild(labelA);
     newDiv.appendChild(calendarEnd);
-    newDiv.appendChild(limitInput);
+    // newDiv.appendChild(limitInput);
     newDiv.appendChild(selectButton);
     return newDiv;
 }
@@ -67,10 +84,9 @@ function createSidePanel() {
     const todayButton = document.createElement('div');
     todayButton.classList.add('button');
     todayButton.classList.add('tile');
-    todayButton.innerText = 'Hoy'
+    todayButton.innerText = 'Hoy';
     todayButton.addEventListener('click', () => {
         const today = new Date().toLocaleDateString('en-CA').slice(0, 10);
-        console.log(today);
         document.getElementById('start').value = today;
         document.getElementById('end').value = today;
         select();
@@ -83,7 +99,6 @@ function createSidePanel() {
     allTimeButton.addEventListener('click', () => {
         // Forces the data to start from the beginning by setting it to a date before deployment.
         const fossil = new Date(2025, 0, 1).toLocaleDateString('en-CA').slice(0, 10);
-        console.log(new Date('2025-01-01'));
         document.getElementById('start').value = fossil;
         document.getElementById('end').value = new Date(Date.now()).toLocaleDateString('en-CA').slice(0, 10);
         select();
@@ -115,12 +130,31 @@ function createChart(data) {
                 try {
                     displayStep(elements[0].index);
                 } catch (err) {
-                    console.log(err);
+                    console.log('Oops! Nothing was clicked...');
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
                 }
             }
         }
     });
     document.getElementById('chartDiv').appendChild(newChart);
+}
+function createLimitInput() {
+    const limitInput = document.createElement('input');
+    limitInput.type = 'text';
+    limitInput.id = 'limit';
+    limitInput.maxLength = 2;
+    limitInput.placeholder = '#';
+
+    const chartDiv = document.getElementById('chartDiv');
+
+    chartDiv.appendChild(limitInput);
 }
 
 function displayStep(index) {

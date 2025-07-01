@@ -1,4 +1,4 @@
-import pool from './db.js';
+import pool from './src/db.js';
 
 import path from 'path';
 import express from 'express';
@@ -18,13 +18,18 @@ app.listen(PORT, () => {
     console.log(`App running on port ${PORT}`);
 });
 
+// Shows the main app screen.
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'app.html'));
 });
 
-// Sends all the rows in the qa1 database. 
+// Selects all the rows in the qa1 database and returns them. 
 app.get('/api/select', async (req, res) => {
     const SQLstring = 'SELECT * FROM qa1';
     const [rows] = await pool.query(SQLstring);
     res.json(rows);
+});
+
+app.post('/api/password', async (req, res) => {
+    res.json({goodPassword: req.body.password === goodPassword})
 })

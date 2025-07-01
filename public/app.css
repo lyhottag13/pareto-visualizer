@@ -18,12 +18,14 @@ body {
 }
 
 #chartDiv {
+    position: relative;
     border-radius: 20px;
     background-color: aquamarine;
     width: 100%;
     padding: 0px;
     height: 100%;
 }
+
 #sidePanel {
     display: grid;
     grid-template-rows: 1fr 1fr 2fr;
@@ -36,8 +38,14 @@ body {
     margin-top: auto;
 }
 
-.tile {
-    /* border: 0px solid black; */
+#limit {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 30px;
+    text-align: center;
+    height: 50px;
+    width: 50px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    border-radius: 10px;
 }
-
-

@@ -26,3 +26,8 @@ button {
     width: 100%;
     background-color: rgb(204, 150, 255);
 }
+
+.smallLabel {
+    font-size: 13px;
+    margin: -7px;
+}

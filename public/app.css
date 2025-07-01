@@ -1,7 +1,7 @@
 body {
     background-color: rgb(225, 225, 225);
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 30px;
+    font-size: 35px;
     color: white;
 }
 
@@ -43,6 +43,7 @@ tr:nth-child(even) {
 
 table {
     border-collapse: collapse;
+    transition: all 0.8s ease;
 }
 
 tr {

@@ -4,6 +4,12 @@ button {
     height: 50px;
     margin-bottom: 10px;
     border-radius: 20px;
+    border: none;
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+
+}
+button:hover {
+    background-color: yellow;
 }
 
 .button {
@@ -25,6 +31,7 @@ button {
     color: white;
 }
 #allTime {
+    
     background-color: rgb(182, 39, 39);
 }
 

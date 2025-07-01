@@ -3,6 +3,8 @@ import filterByDate from "./utils/filterByDate.js";
 import checkList from "./constants/checkList.js";
 import NUMBER_OF_CHECKS from "./constants/NUMBER_OF_CHECKS.js";
 
+let title;
+
 let sortedProblemSteps;
 
 async function main() {
@@ -34,7 +36,7 @@ async function select() {
     const filteredInspections = filterByDate(data, startValue, endValue);
     sortedProblemSteps = getProblemSteps(filteredInspections, limitValue);
     console.log(sortedProblemSteps);
-    createTable(sortedProblemSteps)
+    createTable(sortedProblemSteps);
     createChart(sortedProblemSteps);
 }
 function createInputDiv() {
@@ -51,7 +53,7 @@ function createInputDiv() {
     const selectButton = document.createElement('button');
     selectButton.innerText = 'Select';
     selectButton.addEventListener('click', () => {
-        select();
+        handleRange();
     });
 
     const calendarStart = document.createElement('input');
@@ -94,7 +96,7 @@ function createSidePanel() {
     allTimeButton.id = 'allTime';
     allTimeButton.classList.add('button');
     allTimeButton.classList.add('tile');
-    allTimeButton.innerText = 'Todos los Tiempos';
+    allTimeButton.innerText = 'Datos históricos';
     allTimeButton.addEventListener('click', () => {
         handleAllTime();
     });
@@ -110,12 +112,18 @@ function handleAllTime() {
     const fossil = new Date(2025, 0, 1).toLocaleDateString('en-CA').slice(0, 10);
     document.getElementById('start').value = fossil;
     document.getElementById('end').value = new Date(Date.now()).toLocaleDateString('en-CA').slice(0, 10);
+    title = 'Datos históricos';
     select();
 }
 function handleToday() {
     const today = new Date().toLocaleDateString('en-CA').slice(0, 10);
     document.getElementById('start').value = today;
     document.getElementById('end').value = today;
+    title = 'Hoy';
+    select();
+}
+function handleRange() {
+    title = 'Rango';
     select();
 }
 function createTable(data) {
@@ -138,6 +146,9 @@ function createTable(data) {
         table.appendChild(row);
     }
     document.getElementById('tableDiv').appendChild(table);
+    table.style.opacity = 0;
+    table.offsetHeight;
+    table.style.opacity = 1;
 }
 function createChart(data) {
     document.getElementById('chartDiv').className = '';
@@ -169,6 +180,19 @@ function createChart(data) {
                     beginAtZero: true,
                     ticks: {
                         stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: title,
+                    font: {
+                        size: 40
+                    },
+                    padding: {
+                        top: 30,
+                        bottom: 30
                     }
                 }
             }

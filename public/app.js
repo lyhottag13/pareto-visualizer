@@ -73,7 +73,6 @@ function createInputDiv() {
     newDiv.appendChild(calendarStart);
     newDiv.appendChild(labelA);
     newDiv.appendChild(calendarEnd);
-    // newDiv.appendChild(limitInput);
     newDiv.appendChild(selectButton);
     return newDiv;
 }
@@ -86,7 +85,7 @@ function createSidePanel() {
     todayButton.classList.add('button');
     todayButton.classList.add('tile');
     todayButton.innerText = 'Hoy';
-    todayButton.id = 'today'
+    todayButton.id = 'today';
     todayButton.addEventListener('click', () => {
         handleToday();
     });

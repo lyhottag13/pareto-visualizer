@@ -24,7 +24,7 @@ export default function filterByDate(inspections, dateStart, dateEnd) {
 }
 
 function isValidInspection(inspection, startNumber, endNumber) {
-    const inspectionTimeNumber = new Date(inspection.fecha).getTime();
+    const inspectionTimeNumber = new Date(inspection.fecha.slice(0, 10)).getTime();
     if (inspectionTimeNumber <= endNumber && inspectionTimeNumber >= startNumber) {
         return true;
     }

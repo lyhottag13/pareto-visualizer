@@ -154,7 +154,7 @@ function createChart(data) {
     document.getElementById('chartDiv').className = '';
     document.querySelector('canvas')?.remove();
     const newChart = document.createElement('canvas');
-    newChart.style.height = '90%';
+    newChart.height = '';
     new Chart(newChart, {
         type: 'bar',
         data: {

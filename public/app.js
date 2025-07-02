@@ -12,29 +12,24 @@ async function main() {
     createLimitInput();
 }
 
+/**
+ * Selects a limited amount of values from the MySQL table.
+ * @returns 
+ */
 async function select() {
-    let limitValue = document.getElementById('limit').value;
-    const startValue = document.getElementById('start').value;
-    const endValue = document.getElementById('end').value;
+    const limit = document.getElementById('limit');
+    // If the value of the limit is empty, then it becomes 15.
+    limit.value = limit.value || 15;
+    const start = document.getElementById('start');
+    const end = document.getElementById('end');
     // Input validation:
-    if (limitValue === '') {
-        document.getElementById('limit').value = 15;
-        limitValue = 15;
-    }
-    // If the user input a limit less or equal to 0, then alert the user.
-    if (limitValue <= 0 || limitValue > NUMBER_OF_CHECKS || /[a-zA-Z]/.test(limitValue)) {
-        window.alert('Límite inválido.');
-        return;
-    }
-    // If the start is after the end, then alert the user.
-    if (new Date(startValue).getTime() > new Date(endValue).getTime()) {
-        window.alert('Fecha inválida.');
+    if (!isValidInput(limit.value, start.value, end.value)) {
         return;
     }
     const res = await fetch('/api/select');
     const data = await res.json();
-    const filteredInspections = filterByDate(data, startValue, endValue);
-    sortedProblemSteps = getProblemSteps(filteredInspections, limitValue);
+    const filteredInspections = filterByDate(data, start.value, end.value);
+    sortedProblemSteps = getProblemSteps(filteredInspections, limit.value);
     console.log(sortedProblemSteps);
     createTable(sortedProblemSteps);
     createChart(sortedProblemSteps);
@@ -50,9 +45,11 @@ function createInputDiv() {
     labelDe.className = 'smallLabel';
     labelA.className = 'smallLabel';
 
-    const selectButton = document.createElement('button');
-    selectButton.innerText = 'Select';
-    selectButton.addEventListener('click', () => {
+    const rangeButton = document.createElement('div');
+    rangeButton.id = 'range';
+    rangeButton.className = 'button';
+    rangeButton.innerText = 'Seleccionar';
+    rangeButton.addEventListener('click', () => {
         handleRange();
     });
 
@@ -75,7 +72,7 @@ function createInputDiv() {
     newDiv.appendChild(calendarStart);
     newDiv.appendChild(labelA);
     newDiv.appendChild(calendarEnd);
-    newDiv.appendChild(selectButton);
+    newDiv.appendChild(rangeButton);
     return newDiv;
 }
 
@@ -127,6 +124,7 @@ function handleRange() {
     select();
 }
 function createTable(data) {
+    // Removes an existing table if there is one, so that tables don't stack up.
     document.getElementById('tableDiv').querySelector('table')?.remove();
     const table = document.createElement('table');
     table.innerHTML = `
@@ -147,13 +145,15 @@ function createTable(data) {
     }
     document.getElementById('tableDiv').appendChild(table);
     table.style.opacity = 0;
+    // Used to create a buffer between the opacity 0 and 1, so that the fade-in transition applies.
     table.offsetHeight;
     table.style.opacity = 1;
 }
 function createChart(data) {
-    document.getElementById('chartDiv').className = '';
+    // Removes an existing canvas if there was one so that the screen doesn't clutter with charts.
     document.querySelector('canvas')?.remove();
     const newChart = document.createElement('canvas');
+    // Used to make the chart stretch out. I don't know why this works.
     newChart.height = '';
     new Chart(newChart, {
         type: 'bar',
@@ -220,5 +220,17 @@ function displayStep(index) {
     const stepNumber = sortedProblemSteps[index].step;
     window.alert(checkList[stepNumber - 1]);
 }
-
+function isValidInput(limitValue, startValue, endValue) {
+    // If the user input an invalid limit, then alert the user.
+    if (limitValue <= 0 || limitValue > NUMBER_OF_CHECKS || /[a-zA-Z]/.test(limitValue)) {
+        window.alert('Límite inválido.');
+        return false;
+    }
+    // If the start is after the end, then alert the user.
+    if (new Date(startValue).getTime() > new Date(endValue).getTime()) {
+        window.alert('Fecha inválida.');
+        return false;
+    }
+    return true;
+}
 main();

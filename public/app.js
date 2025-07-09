@@ -149,6 +149,7 @@ function createTable(data) {
     // Removes an existing table if there is one, so that tables don't stack up.
     document.getElementById('tableDiv').querySelector('table')?.remove();
     const table = document.createElement('table');
+    table.style.width = '100%';
     table.innerHTML = `
     <tr>
         <th>Step #</th>

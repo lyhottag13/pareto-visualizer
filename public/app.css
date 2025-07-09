@@ -37,6 +37,7 @@ body {
     padding: 0px;
     height: 100%;
 }
+
 tr:nth-child(even) {
     background-color: #db0000;
 }
@@ -102,7 +103,17 @@ table tr:nth-child(1) th:nth-child(3) {
     border-radius: 10px;
     border: 0px solid black;
 }
+
 button {
     background-color: black;
     color: white;
+}
+
+@media (min-width: 1500px) {
+    body {
+        font-size: 50px;
+    }
+    tr {
+        font-size: 25px;
+    }
 }

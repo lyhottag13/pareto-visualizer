@@ -24,8 +24,9 @@ app.get('/', (req, res) => {
 });
 
 // Selects all the rows in the qa1 database and returns them. 
-app.get('/api/select', async (req, res) => {
-    const SQLstring = 'SELECT * FROM qa1';
+app.post('/api/select', async (req, res) => {
+    const { SQLstring } = req.body;
+    console.log(SQLstring);
     const [rows] = await pool.query(SQLstring);
     res.json(rows);
 });

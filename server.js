@@ -1,10 +1,10 @@
 import pool from './src/db.js';
+import port from './src/port.js'
 
 import path from 'path';
 import express from 'express';
 import { fileURLToPath } from 'url';
 const app = express();
-const PORT = 3001;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,8 +14,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
-app.listen(PORT, () => {
-    console.log(`App running on port ${PORT}`);
+app.listen(port, () => {
+    console.log(`App running on port ${port}`);
 });
 
 // Shows the main app screen.

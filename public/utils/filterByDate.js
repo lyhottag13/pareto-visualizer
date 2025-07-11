@@ -8,12 +8,13 @@ export default function filterByDate(inspections, dateStart, dateEnd) {
         window.alert('Ingresa fechas');
         return;
     }
+    // Converts the date to a millisecond number, like 170000000, to make comparisons easier.
     startNumber = new Date(dateStart).getTime();
 
     // End is exactly one day's milliseconds after start, so it shows the exact day.
     endNumber = new Date(dateEnd).getTime() + MILLISECONDS_IN_A_DAY;
 
-    const filteredInspections = [];
+    const filteredInspections = []; // Filtered by time, must be within the start and end dates.
     inspections.forEach(inspection => {
         // Only adds the inspection to the dataset if it passes the filter.
         if (isValidInspection(inspection, startNumber, endNumber)) {

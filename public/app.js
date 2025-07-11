@@ -5,7 +5,7 @@ import NUMBER_OF_CHECKS from "./constants/NUMBER_OF_CHECKS.js";
 
 let chartTitle; // The title for the chart, needed since it's difficult to directly update the chart's title without external variables.
 
-let sortedProblemSteps;
+let sortedProblemSteps; // The most problematic steps sorted in descending order.
 
 async function main() {
     createSidePanel();
@@ -13,23 +13,16 @@ async function main() {
 }
 
 /**
- * Selects a limited amount of values from the MySQL table.
- * @returns - The all the values in the MySQL table.
+ * Selects a limited amount of values from the MySQL table. Only selects the
+ * values where there are fails in at least one column.
+ * This is done through a for-loop that writes `OR sn = "FAIL"` for each
+ * check possible. It comes out to be a long query, but it reduces the fetch time,
+ * so it will help in the long-term when there are thousands of QA inspections
+ * in the table.
+ * @returns - The limited values from the MySQL table.
  */
 async function select() {
-    let SQLstring = 'SELECT * FROM qa1 WHERE s1 = "FAIL"';
-    for (let i = 1; i < NUMBER_OF_CHECKS; i++) {
-        SQLstring += ` OR s${i + 1} = "FAIL"`
-    }
-    SQLstring += ';';
-    console.log(SQLstring);
-    const res = await fetch('/api/select', {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ SQLstring })
-    });
+    const res = await fetch('/api/select');
     const data = await res.json();
     return data;
 }
@@ -104,7 +97,7 @@ function createSidePanel() {
 
 }
 function handleAllTime() {
-    // Forces the data to start from the beginning by setting it to a date before deployment.
+    // Forces the data to start from the beginning by setting it to a date prior to deployment.
     const fossil = new Date(2025, 0, 1).toLocaleDateString('en-CA').slice(0, 10);
     document.getElementById('start').value = fossil;
     document.getElementById('end').value = new Date(Date.now()).toLocaleDateString('en-CA').slice(0, 10);
@@ -230,6 +223,9 @@ function createChart(data) {
     });
     document.getElementById('chartDiv').appendChild(newChart);
 }
+/**
+ * Creates the entire limit input element on the chart.
+ */
 function createLimitInput() {
     const limitInput = document.createElement('input');
     limitInput.type = 'text';
@@ -246,12 +242,21 @@ function createLimitInput() {
 
     chartDiv.appendChild(limitInput);
 }
-
+/**
+ * Displays the step name of the bar chart item that was clicked by the user.
+ * This is done so that it's easier for the user to see what specifically is causing
+ * the high fail volume without having to refer to the table or an external guide.
+ * @param {number} index - The index of the step to show. 
+ */
 function displayStep(index) {
     const stepNumber = sortedProblemSteps[index].step;
     window.alert(checkList[stepNumber - 1]);
 }
-// If the user input an invalid limit, then alert the user.
+/**
+ * Checks to see if the step limit the user input is valid.
+ * @param {number} limitValue The number of steps that the user wants to limit the chart to.
+ * @returns Whether or not the limit is valid.
+ */
 function isValidLimit(limitValue) {
     if (limitValue <= 0 || limitValue > NUMBER_OF_CHECKS || /[a-zA-Z]/.test(limitValue)) {
         window.alert('Límite inválido.');
@@ -259,7 +264,13 @@ function isValidLimit(limitValue) {
     }
     return true;
 }
-// If the start is after the end, then alert the user.
+/**
+ * Checks to see if the dates input are realistic. The start date cannot be
+ * after the end date.
+ * @param {string} startValue A representation of the beginning date, formatted YYYY-MM-DD.
+ * @param {string} endValue A representation of the end date, formatted YYYY-MM-DD.
+ * @returns Whether the dates were valid.
+ */
 function isValidDate(startValue, endValue) {
     if (new Date(startValue).getTime() > new Date(endValue).getTime()) {
         window.alert('Fecha inválida.');

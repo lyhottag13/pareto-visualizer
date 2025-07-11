@@ -41,3 +41,4 @@ echo ^</configuration^> >> web.config
 
 CALL pm2 delete pareto
 CALL pm2 start server.js --name pareto
+CALL pm2 save

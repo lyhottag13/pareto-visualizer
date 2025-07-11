@@ -1,5 +1,8 @@
 import pool from './src/db.js';
-import port from './src/port.js'
+import port from './src/port.js';
+import NUMBER_OF_CHECKS from './public/constants/NUMBER_OF_CHECKS.js';
+
+// START BOILERPLATE.
 
 import path from 'path';
 import express from 'express';
@@ -18,15 +21,20 @@ app.listen(port, () => {
     console.log(`App running on port ${port}`);
 });
 
+// END BOILERPLATE.
+
 // Shows the main app screen.
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'app.html'));
 });
 
-// Selects all the rows in the qa1 database and returns them. 
-app.post('/api/select', async (req, res) => {
-    const { SQLstring } = req.body;
-    console.log(SQLstring);
+// Selects all the rows with at least one fail in the table and returns them. 
+app.get('/api/select', async (req, res) => {
+    let SQLstring = 'SELECT * FROM qa1 WHERE s1 = "FAIL"';
+    for (let i = 1; i < NUMBER_OF_CHECKS; i++) {
+        SQLstring += ` OR s${i + 1} = "FAIL"`
+    }
+    SQLstring += ';';
     const [rows] = await pool.query(SQLstring);
     res.json(rows);
 });

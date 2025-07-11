@@ -7,6 +7,7 @@ export default function getProblemSteps(rows, numberOfDesiredSteps) {
     for (let i = 0; i < numberOfChecks; i++) {
         steps[i] = { step: i + 1, count: 0 };
     }
+    // Increments the step's fail count by going through each inspection's steps.
     for (let i = 0; i < rows.length; i++) {
         for (let j = 0; j < numberOfChecks; j++) {
             if (rows[i][`s${j + 1}`] === 'FAIL') {
@@ -14,7 +15,7 @@ export default function getProblemSteps(rows, numberOfDesiredSteps) {
             }
         }
     }
-    // Returns the steps sorted in descending order (highest first).
+    // Sorts the steps in descending order (highest first).
     const sortedSteps = steps.sort((a, b) => b.count - a.count);
     const desiredSteps = [];
     for (let i = 0; (i < numberOfDesiredSteps) && (i < steps.length); i++) {

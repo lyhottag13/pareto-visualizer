@@ -24,7 +24,6 @@
     color: white;
 }
 #allTime {
-    
     background-color: rgb(182, 39, 39);
 }
 
@@ -39,8 +38,11 @@
     width: 100%;
     background-color: rgb(182, 39, 39);
 }
+#start, #end {
+    font-size: clamp(1rem, 2vw, 2rem);
+}
 
 .smallLabel {
-    font-size: 13px;
+    font-size: clamp(1rem, 2vw, 2rem);
     /* margin: -7px; */
 }

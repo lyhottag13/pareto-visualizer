@@ -32,6 +32,10 @@ async function selectFailRows() {
     return data;
 }
 
+/**
+ * Creates the div that holds the range inputs.
+ * @returns {HTMLDivElement} The div element that holds the range inputs.
+ */
 function createInputDiv() {
     const label = document.createElement('span');
     const labelDe = document.createElement('span');
@@ -43,13 +47,11 @@ function createInputDiv() {
     labelDe.className = 'smallLabel';
     labelA.className = 'smallLabel';
 
-    const rangeButton = document.createElement('div');
+    const rangeButton = document.createElement('button');
     rangeButton.id = 'range';
     rangeButton.className = 'button';
     rangeButton.innerText = 'Seleccionar';
-    rangeButton.addEventListener('click', () => {
-        handleRange();
-    });
+    rangeButton.addEventListener('click', handleRange);
 
     const calendarStart = document.createElement('input');
     const calendarEnd = document.createElement('input');
@@ -71,27 +73,26 @@ function createInputDiv() {
     return newDiv;
 }
 
+/**
+ * Creates the side panel, being the today, all-time, and range panels.
+ */
 function createSidePanel() {
     const panel = document.createElement('div');
     panel.id = 'sidePanel';
 
-    const todayButton = document.createElement('div');
+    const todayButton = document.createElement('button');
     todayButton.classList.add('button');
     todayButton.classList.add('tile');
     todayButton.innerText = 'Hoy';
     todayButton.id = 'today';
-    todayButton.addEventListener('click', () => {
-        handleToday();
-    });
+    todayButton.addEventListener('click', handleToday);
 
-    const allTimeButton = document.createElement('div');
+    const allTimeButton = document.createElement('button');
     allTimeButton.id = 'allTime';
     allTimeButton.classList.add('button');
     allTimeButton.classList.add('tile');
     allTimeButton.innerText = 'Datos históricos';
-    allTimeButton.addEventListener('click', () => {
-        handleAllTime();
-    });
+    allTimeButton.addEventListener('click', handleAllTime);
 
     document.getElementById('appDiv').appendChild(panel);
     panel.appendChild(todayButton);
@@ -99,6 +100,12 @@ function createSidePanel() {
     panel.appendChild(createInputDiv());
 
 }
+
+/**
+ * Handles the all-time button press. Sets the start time to a date before the
+ * QA1 captura app was in use to prevent any points of data from being excluded.
+ * Also, sets the end time to today.
+ */
 function handleAllTime() {
     // Forces the data to start from the beginning by setting it to a date prior to deployment.
     const fossil = new Date(2025, 0, 1).toLocaleDateString('en-CA').slice(0, 10);
@@ -107,6 +114,10 @@ function handleAllTime() {
     chartTitle = 'Datos históricos';
     handleSelect();
 }
+
+/**
+ * Handles the today button press. Sets the start and end times to today.
+ */
 function handleToday() {
     const today = new Date().toLocaleDateString('en-CA').slice(0, 10);
     document.getElementById('start').value = today;
@@ -114,10 +125,21 @@ function handleToday() {
     chartTitle = 'Hoy';
     handleSelect();
 }
+
+/**
+ * Handles the range button press. Utilizes the numbers already within the range,
+ * though this is mostly handled within the reusable handleSelect method.
+ */
 function handleRange() {
     chartTitle = 'Rango';
     handleSelect();
 }
+
+/**
+ * Handles any selection. Sends out a request with the range of time, then
+ * creates a table and graph using the response.
+ * @returns {void} Used to break out of the function if inputs are invalid.
+ */
 async function handleSelect() {
     const limit = document.getElementById('limit');
     // If the value of the limit is empty, then it becomes 15.
@@ -128,10 +150,17 @@ async function handleSelect() {
     if (!isValidLimit(limit.value) || !isValidDate(start.value, end.value)) {
         return;
     }
+    toggleButtons(false);
+
+    // Retrieves the rows with ANY fails.
     const data = await selectFailRows();
+
+    toggleButtons(true);
     const filteredInspections = filterByDate(data, start.value, end.value);
     sortedProblemSteps = getProblemSteps(filteredInspections, limit.value);
     console.log(sortedProblemSteps);
+
+    // Creates the table and chart based on the sorted problem steps.
     createTable(sortedProblemSteps);
     createChart(sortedProblemSteps);
 }
@@ -281,4 +310,17 @@ function isValidDate(startValue, endValue) {
     }
     return true;
 }
+
+/**
+ * Toggles the buttons between an on and off state based on the state of selecting.
+ * @param {boolean} enabled The desired state for the buttons.
+ */
+function toggleButtons(enabled) {
+    /** @type {HTMLButtonElement[]} */
+    document.querySelectorAll('button').forEach(button => {
+        button.style.filter = enabled ? 'brightness(1)' : 'brightness(0.7)';
+        button.disabled = !enabled;
+    });
+}
+
 main();

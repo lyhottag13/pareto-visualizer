@@ -24,17 +24,17 @@ app.listen(port, '127.0.0.1',() => {
 // END BOILERPLATE.
 
 // Shows the main app screen.
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'app.html'));
 });
 
 // Selects all the rows with at least one fail in the table and returns them. 
-app.get('/api/select', async (req, res) => {
+app.get('/api/select', async (_req, res) => {
     let SQLstring = 'SELECT * FROM qa1 WHERE s1 = 0';
     for (let i = 1; i < NUMBER_OF_CHECKS; i++) {
-        SQLstring += ` OR s${i + 1} = 0`
+        SQLstring += ` OR s${i + 1} = 0`;
     }
     SQLstring += ';';
-    const [rows] = await pool.query(SQLstring);
+    const [rows] = await pool.execute(SQLstring);
     res.json(rows);
 });

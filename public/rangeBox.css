@@ -18,6 +18,8 @@
     justify-content: center;
     align-items: center;
     transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border: 0;
+    font-size: clamp(1rem, 2vw, 3rem);
 }
 #today, #range {
     background-color: black;

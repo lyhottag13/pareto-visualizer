@@ -3,8 +3,12 @@ import filterByDate from "./utils/filterByDate.js";
 import checkList from "./constants/checkList.js";
 import NUMBER_OF_CHECKS from "./constants/NUMBER_OF_CHECKS.js";
 
+/** @typedef {import('../constants/types.js').Inspection} */
+
+/** @type {string} */
 let chartTitle; // The title for the chart, needed since it's difficult to directly update the chart's title without external variables.
 
+/** @type {{step: number, count: number}[]} */
 let sortedProblemSteps; // The most problematic steps sorted in descending order.
 
 async function main() {
@@ -15,17 +19,19 @@ async function main() {
 /**
  * Selects a limited amount of values from the MySQL table. Only selects the
  * values where there are fails in at least one column.
- * This is done through a for-loop that writes `OR sn = "FAIL"` for each
+ * This is done through a for-loop that writes `OR sn = "0"` for each
  * check possible. It comes out to be a long query, but it reduces the fetch time,
  * so it will help in the long-term when there are thousands of QA inspections
  * in the table.
- * @returns - The limited values from the MySQL table.
+ * @returns {Promise<Inspection[]>} The limited values from the MySQL table.
  */
-async function select() {
+async function selectFailRows() {
     const res = await fetch('/api/select');
     const data = await res.json();
+    console.log(data);
     return data;
 }
+
 function createInputDiv() {
     const label = document.createElement('span');
     const labelDe = document.createElement('span');
@@ -51,9 +57,6 @@ function createInputDiv() {
     calendarStart.id = 'start';
     calendarEnd.type = 'date';
     calendarEnd.id = 'end';
-
-    // const limitInput = document.createElement('input');
-    // limitInput.id = 'limit';
 
     const newDiv = document.createElement('div');
     newDiv.id = 'inputDiv';
@@ -125,7 +128,7 @@ async function handleSelect() {
     if (!isValidLimit(limit.value) || !isValidDate(start.value, end.value)) {
         return;
     }
-    const data = await select();
+    const data = await selectFailRows();
     const filteredInspections = filterByDate(data, start.value, end.value);
     sortedProblemSteps = getProblemSteps(filteredInspections, limit.value);
     console.log(sortedProblemSteps);
@@ -255,7 +258,7 @@ function displayStep(index) {
 /**
  * Checks to see if the step limit the user input is valid.
  * @param {number} limitValue The number of steps that the user wants to limit the chart to.
- * @returns Whether or not the limit is valid.
+ * @returns {boolean} Whether or not the limit is valid.
  */
 function isValidLimit(limitValue) {
     if (limitValue <= 0 || limitValue > NUMBER_OF_CHECKS || /[a-zA-Z]/.test(limitValue)) {

@@ -30,9 +30,9 @@ app.get('/', (req, res) => {
 
 // Selects all the rows with at least one fail in the table and returns them. 
 app.get('/api/select', async (req, res) => {
-    let SQLstring = 'SELECT * FROM qa1 WHERE s1 = "FAIL"';
+    let SQLstring = 'SELECT * FROM qa1 WHERE s1 = 0';
     for (let i = 1; i < NUMBER_OF_CHECKS; i++) {
-        SQLstring += ` OR s${i + 1} = "FAIL"`
+        SQLstring += ` OR s${i + 1} = 0`
     }
     SQLstring += ';';
     const [rows] = await pool.query(SQLstring);
